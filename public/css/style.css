@@ -9,17 +9,13 @@ body{ background:#f8fafc; color:var(--ink); }
 
 .navbar{ backdrop-filter:saturate(1.1) blur(3px); }
 
-/* ============== BOTONES ============== */
 .btn-brand{ background:var(--brand); color:#fff; border:none; }
 .btn-brand:hover{ filter:brightness(.95); }
 
-/* ============== PRODUCT CARDS ============== */
 .product-card{ transition:transform .15s ease, box-shadow .15s ease; border:0; }
 .product-card:hover{ transform:translateY(-3px); box-shadow:0 14px 32px rgba(0,0,0,.12); }
 .card-img-top{ aspect-ratio:4/3; object-fit:cover; }
 
-/* ============== HERO INICIO ============== */
-/* Full width aunque el layout use <main class="container"> */
 .full-bleed{
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -27,13 +23,13 @@ body{ background:#f8fafc; color:var(--ink); }
 }
 
 .hero-landing{
-  /* TU IMAGEN REAL AQUÍ */
+  
   background-image: url("/img/sneakers-n47yc2r133m7avse.webp");
   background-position:center;
   background-size:cover;
   background-repeat:no-repeat;
 
-  min-height: 100vh;      /* pantalla completa; usa 56vh si prefieres más corto */
+  min-height: 100vh;     
   position: relative;
   display:flex; align-items:center; justify-content:center;
 }
@@ -43,7 +39,6 @@ body{ background:#f8fafc; color:var(--ink); }
 }
 .hero-content{ position:relative; z-index:2; }
 
-/* ============== BANNERS INTERNOS ============== */
 .banner{
   background: linear-gradient(120deg, rgba(108,99,255,.12), rgba(0,0,0,0));
   border-radius:12px;
@@ -52,7 +47,6 @@ body{ background:#f8fafc; color:var(--ink); }
   background: linear-gradient(135deg, rgba(255,99,132,.12), rgba(99,102,241,.08));
 }
 
-/* ============== FONDOS “AGUA” POR PÁGINA ============== */
 .page-products main{
   background:
     radial-gradient(1200px 480px at 10% -10%, rgba(108,99,255,.12), transparent 60%),
@@ -72,7 +66,6 @@ body{ background:#f8fafc; color:var(--ink); }
   border-radius:16px;
 }
 
-/* ============== ACENTO EN CARDS DENTRO DE CATEGORÍAS ============== */
 .product-card.accent{
   background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.95));
   border:1px solid rgba(0,0,0,.06);
