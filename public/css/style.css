@@ -6,7 +6,7 @@
 
 body{ background:#f8fafc; color:var(--ink); }
 
-/* ============== NAVBAR ============== */
+
 .navbar{ backdrop-filter:saturate(1.1) blur(3px); }
 
 /* ============== BOTONES ============== */
