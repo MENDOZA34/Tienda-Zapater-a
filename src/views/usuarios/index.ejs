@@ -1,0 +1,9 @@
+<h1 class="mb-3">Usuarios</h1>
+<ul class="list-group">
+  <% (usuarios || []).forEach(u => { %>
+    <li class="list-group-item d-flex justify-content-between">
+      <span><b><%= u.nombre %></b> — <%= u.email %></span>
+      <span class="badge text-bg-secondary"><%= u.role %></span>
+    </li>
+  <% }) %>
+</ul>

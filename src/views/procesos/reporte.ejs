@@ -1,0 +1,32 @@
+<h1>Reporte de pedidos</h1>
+
+<form class="row g-2 mb-3">
+  <div class="col-md-3">
+    <label class="form-label">Desde</label>
+    <input type="date" name="desde" value="<%= desde||'' %>" class="form-control">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Hasta</label>
+    <input type="date" name="hasta" value="<%= hasta||'' %>" class="form-control">
+  </div>
+  <div class="col-md-3 d-flex align-items-end">
+    <button class="btn btn-outline-primary w-100">Filtrar</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr><th>Fecha</th><th>Subtotal</th><th>IVA</th><th>Envío</th><th>Total</th></tr>
+  </thead>
+  <tbody>
+    <% pedidos.forEach(p => { %>
+      <tr>
+        <td><%= new Date(p.creado_en).toLocaleString() %></td>
+        <td>Q<%= Number(p.subtotal).toFixed(2) %></td>
+        <td>Q<%= Number(p.iva).toFixed(2) %></td>
+        <td>Q<%= Number(p.envio).toFixed(2) %></td>
+        <td><strong>Q<%= Number(p.total).toFixed(2) %></strong></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

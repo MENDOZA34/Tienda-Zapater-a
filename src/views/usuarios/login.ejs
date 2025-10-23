@@ -1,0 +1,20 @@
+<h1 class="mb-3">Iniciar sesión</h1>
+
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form method="post" action="/usuarios/login" class="row g-3" style="max-width:420px">
+  <div class="col-12">
+    <label class="form-label">Email</label>
+    <input name="email" type="email" class="form-control" required>
+  </div>
+  <div class="col-12">
+    <label class="form-label">Contraseña</label>
+    <input name="password" type="password" class="form-control" required>
+  </div>
+  <div class="col-12 d-flex gap-2">
+    <button class="btn btn-primary">Ingresar</button>
+    <a class="btn btn-outline-secondary" href="/usuarios/register">Crear cuenta</a>
+  </div>
+</form>

@@ -1,0 +1,23 @@
+<h1 class="mb-3">Mi perfil</h1>
+<p><b>Nombre:</b> <%= user?.nombre %></p>
+<p><b>Email:</b> <%= user?.email %></p>
+
+<h2 class="mt-4">Favoritos</h2>
+<% if (!favoritos || !favoritos.length) { %>
+  <p>No tienes productos en favoritos.</p>
+<% } else { %>
+  <div class="row g-3">
+    <% favoritos.forEach(p => { %>
+      <div class="col-12 col-md-4">
+        <div class="card h-100">
+          <img src="<%= p.imagen_url || '/img/placeholder.webp' %>" class="card-img-top" alt="<%= p.titulo %>">
+          <div class="card-body">
+            <h5 class="card-title"><%= p.titulo %></h5>
+            <p class="text-muted">Q<%= Number(p.precio).toFixed(2) %></p>
+            <a class="btn btn-outline-secondary btn-sm" href="/productos/<%= p.id %>">Ver</a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>

@@ -1,0 +1,36 @@
+<h1 class="mb-3">Inventario</h1>
+<a class="btn btn-primary mb-3" href="/inventario/create">Crear nuevo producto</a>
+
+<% if (!inventario.length) { %>
+  <p>No hay productos en inventario.</p>
+<% } else { %>
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Stock</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% inventario.forEach(it => { %>
+        <tr>
+          <td><%= it.id %></td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <% if (it.imagen_url) { %>
+                <img src="<%= it.imagen_url %>" style="width:48px;height:48px;object-fit:cover" class="rounded">
+              <% } %>
+              <span><%= it.descripcion %></span>
+            </div>
+          </td>
+          <td>Q<%= Number(it.precio||0).toFixed(2) %></td>
+          <td><%= it.stock %></td>
+          <td><a class="btn btn-sm btn-outline-secondary" href="/inventario/<%= it.id %>">Ver</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>

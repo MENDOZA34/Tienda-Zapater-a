@@ -1,0 +1,9 @@
+<h1 class="mb-3">Detalle de producto</h1>
+<p><b>ID:</b> <%= item.id %></p>
+<p><b>Descripción:</b> <%= item.descripcion %></p>
+<p><b>Precio:</b> Q<%= Number(item.precio||0).toFixed(2) %></p>
+<p><b>Stock:</b> <%= item.stock %></p>
+<% if (item.imagen_url) { %>
+  <img src="<%= item.imagen_url %>" alt="imagen" class="img-fluid rounded" style="max-width:320px">
+<% } %>
+<a class="btn btn-outline-secondary mt-3" href="/inventario">Volver</a>

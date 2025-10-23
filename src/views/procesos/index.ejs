@@ -1,0 +1,44 @@
+<h1>Tu carrito</h1>
+
+<% if (!items.length) { %>
+  <p>Vacío.</p>
+<% } else { %>
+  <table class="table align-middle">
+    <thead>
+      <tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr>
+    </thead>
+    <tbody>
+    <% items.forEach(it => { %>
+      <tr data-cart-row data-precio="<%= Number(it.precio) %>">
+        <td>
+          <img src="<%= it.imagen_url||'/img/placeholder.webp' %>" style="width:64px;height:64px;object-fit:cover" class="me-2 rounded">
+          <%= it.titulo %>
+        </td>
+        <td data-cant><%= it.quantity %></td>
+        <td>Q<%= Number(it.precio).toFixed(2) %></td>
+        <td>Q<%= (Number(it.precio)*Number(it.quantity)).toFixed(2) %></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+
+  <!-- Panel de totales calculados en cliente -->
+  <div class="card p-3 mb-3">
+    <div class="d-flex justify-content-between"><span>Subtotal:</span><strong data-subtotal>Q0.00</strong></div>
+    <div class="d-flex justify-content-between"><span>IVA (12%):</span><strong data-iva>Q0.00</strong></div>
+    <div class="d-flex justify-content-between"><span>Envío:</span><strong data-envio>Q0.00</strong></div>
+    <hr>
+    <div class="d-flex justify-content-between fs-5"><span>Total:</span><strong data-total>Q0.00</strong></div>
+  </div>
+
+  <!-- Form de checkout: se mandan los valores calculados por JS -->
+  <form method="post" action="/procesos/checkout">
+    <input type="hidden" name="subtotal" value="">
+    <input type="hidden" name="iva" value="">
+    <input type="hidden" name="envio" value="">
+    <input type="hidden" name="total" value="">
+    <button class="btn btn-brand btn-lg">Finalizar compra</button>
+  </form>
+
+  <script src="/js/cart-calc.js"></script>
+<% } %>

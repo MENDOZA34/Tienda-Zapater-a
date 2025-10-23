@@ -1,0 +1,14 @@
+<h1 class="mb-3">Categorías</h1>
+<a class="btn btn-primary mb-3" href="/categorias/create">Nueva categoría</a>
+<table class="table table-striped">
+  <thead><tr><th>ID</th><th>Nombre</th><th></th></tr></thead>
+  <tbody>
+    <% (categorias||[]).forEach(c => { %>
+      <tr>
+        <td><%= c.id %></td>
+        <td><%= c.nombre %></td>
+        <td><a class="btn btn-sm btn-outline-secondary" href="/categorias/<%= c.id %>">Ver</a></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
