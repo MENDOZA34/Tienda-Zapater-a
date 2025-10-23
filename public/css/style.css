@@ -15,6 +15,8 @@ body{ background:#f8fafc; color:var(--ink); }
 .product-card:hover{ transform:translateY(-3px); box-shadow:0 14px 32px rgba(0,0,0,.12); }
 .card-img-top{ aspect-ratio:4/3; object-fit:cover; }
 
+/* ============== HERO INICIO ============== */
+
 .full-bleed{
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -28,6 +30,7 @@ body{ background:#f8fafc; color:var(--ink); }
   background-size:cover;
   background-repeat:no-repeat;
 
+  min-height: 100vh;      /* pantalla completa */
   min-height: 100vh;     
   position: relative;
   display:flex; align-items:center; justify-content:center;
