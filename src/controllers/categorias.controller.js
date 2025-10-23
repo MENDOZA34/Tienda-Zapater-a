@@ -1,19 +1,17 @@
 
 const pool = require('../db');
 
-// LISTAR TODAS LAS CATEGORÍAS
 exports.index = async (req, res, next) => {
   try {
     const [rows] = await pool.query('SELECT * FROM categorias ORDER BY nombre');
     res.render('categorias/index', { 
       title: 'Categorías', 
       categorias: rows,
-      page: 'page-category' // fondo visual “agua”
+      page: 'page-category' 
     });
   } catch (e) { next(e); }
 };
 
-// FORMULARIO PARA CREAR UNA NUEVA CATEGORÍA
 exports.createForm = (req, res) => {
   res.render('categorias/create', { 
     title: 'Crear categoría',
@@ -21,7 +19,6 @@ exports.createForm = (req, res) => {
   });
 };
 
-// GUARDAR UNA NUEVA CATEGORÍA EN LA BASE DE DATOS
 exports.store = async (req, res, next) => {
   try {
     const { nombre } = req.body;
@@ -31,7 +28,6 @@ exports.store = async (req, res, next) => {
   } catch (e) { next(e); }
 };
 
-// MOSTRAR UNA CATEGORÍA Y SUS PRODUCTOS
 exports.show = async (req, res, next) => {
   try {
     const id = req.params.id;
