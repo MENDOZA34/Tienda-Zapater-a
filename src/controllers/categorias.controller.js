@@ -1,6 +1,4 @@
-// ===============================
-// src/controllers/categorias.controller.js
-// ===============================
+
 const pool = require('../db');
 
 // LISTAR TODAS LAS CATEGORÍAS

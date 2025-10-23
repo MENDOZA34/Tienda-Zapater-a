@@ -19,7 +19,7 @@ body{ background:#f8fafc; color:var(--ink); }
 .card-img-top{ aspect-ratio:4/3; object-fit:cover; }
 
 /* ============== HERO INICIO ============== */
-/* Full width aunque el layout use <main class="container"> */
+
 .full-bleed{
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -33,7 +33,7 @@ body{ background:#f8fafc; color:var(--ink); }
   background-size:cover;
   background-repeat:no-repeat;
 
-  min-height: 100vh;      /* pantalla completa; usa 56vh si prefieres más corto */
+  min-height: 100vh;      /* pantalla completa */
   position: relative;
   display:flex; align-items:center; justify-content:center;
 }
