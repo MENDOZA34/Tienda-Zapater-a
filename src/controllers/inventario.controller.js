@@ -10,12 +10,12 @@ exports.index = async (req, res, next) => {
   } catch (e) { next(e); }
 };
 
-// Formulario para crear "producto" rápido
+// Formulario para crear "producto" 
 exports.createForm = (req, res) => {
   res.render('inventario/create', { title: 'Crear producto (inventario)' });
 };
 
-// Guardar nuevo producto (mínimo: descripcion->titulo)
+// Guardar nuevo producto 
 exports.store = async (req, res, next) => {
   try {
     const { descripcion } = req.body;
