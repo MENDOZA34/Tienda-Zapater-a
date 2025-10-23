@@ -6,7 +6,6 @@
 
 body{ background:#f8fafc; color:var(--ink); }
 
-
 .navbar{ backdrop-filter:saturate(1.1) blur(3px); }
 
 .btn-brand{ background:var(--brand); color:#fff; border:none; }
