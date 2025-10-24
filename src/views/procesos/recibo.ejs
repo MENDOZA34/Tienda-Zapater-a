@@ -1,21 +1,67 @@
-<%- include('../layouts/main', { page: 'recibo' }) %>
-
+<!-- src/views/procesos/recibo.ejs -->
 <section class="container" style="max-width: 900px">
   <h1 class="mb-3">Recibo de compra</h1>
 
-  <div class="card">
+  <div class="card mb-4">
     <div class="card-body">
-      <p><strong>Fecha:</strong> <%= new Date(pedido.created_at).toLocaleString() %></p>
-      <p><strong>Subtotal:</strong> Q<%= Number(pedido.subtotal).toFixed(2) %></p>
-      <p><strong>IVA (12%):</strong> Q<%= Number(pedido.iva).toFixed(2) %></p>
-      <p><strong>Envío:</strong> Q<%= Number(pedido.envio).toFixed(2) %></p>
-      <hr />
-      <p class="h5"><strong>Total:</strong> Q<%= Number(pedido.total).toFixed(2) %></p>
+      <p class="mb-1"><strong>Pedido #</strong> <%= pedido.id %></p>
+      <p class="mb-1"><strong>Fecha</strong> <%= pedido.creado_en.toISOString ? pedido.creado_en.toISOString().slice(0,19).replace('T',' ') : pedido.creado_en %></p>
+      <p class="mb-1"><strong>Usuario</strong> <%= user ? user.nombre : '—' %></p>
     </div>
   </div>
 
-  <div class="mt-4">
-    <a class="btn btn-primary" href="/procesos/reporte">Ver reporte de pedidos</a>
-    <a class="btn btn-secondary" href="/productos">Seguir comprando</a>
+  <h5>Detalle</h5>
+  <% if (items && items.length) { %>
+    <div class="table-responsive mb-3">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th class="text-end">Precio</th>
+            <th class="text-end">Cantidad</th>
+            <th class="text-end">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(it => { %>
+            <tr>
+              <td><%= it.titulo %></td>
+              <td class="text-end">Q <%= Number(it.precio).toFixed(2) %></td>
+              <td class="text-end"><%= it.cantidad %></td>
+              <td class="text-end">Q <%= (Number(it.precio) * Number(it.cantidad)).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <p>No hay items registrados en este pedido.</p>
+  <% } %>
+
+  <div class="d-flex justify-content-end">
+    <div style="min-width: 280px">
+      <div class="d-flex justify-content-between">
+        <span>Subtotal:</span>
+        <strong>Q <%= Number(pedido.subtotal).toFixed(2) %></strong>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>IVA:</span>
+        <strong>Q <%= Number(pedido.iva).toFixed(2) %></strong>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Envío:</span>
+        <strong>Q <%= Number(pedido.envio).toFixed(2) %></strong>
+      </div>
+      <hr class="my-2" />
+      <div class="d-flex justify-content-between fs-5">
+        <span>Total:</span>
+        <strong>Q <%= Number(pedido.total).toFixed(2) %></strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 d-flex gap-2">
+    <a href="/procesos/reporte" class="btn btn-primary">Ver reporte</a>
+    <a href="/productos" class="btn btn-outline-secondary">Seguir comprando</a>
   </div>
 </section>

@@ -1,7 +1,7 @@
 // src/controllers/procesos.controller.js
 const pool = require('../db');
 
-// Carrito
+// ===== Carrito (ver) =====
 exports.index = async (req, res, next) => {
   try {
     const [car] = await pool.query(
@@ -46,7 +46,7 @@ exports.index = async (req, res, next) => {
   }
 };
 
-// Finalizar compra
+// ===== Finalizar compra =====
 exports.checkout = async (req, res, next) => {
   try {
     const uid = req.session.user.id;
@@ -65,7 +65,7 @@ exports.checkout = async (req, res, next) => {
     );
     const pedidoId = p.insertId;
 
-    // 2) Copiar items del carrito a pedido_items (si la tabla existe)
+    // 2) Copiar items del carrito a pedido_items (si la tabla no existe, crearla)
     const [[car]] = await pool.query(
       'SELECT id FROM carritos WHERE usuario_id = ?',
       [uid]
@@ -74,7 +74,7 @@ exports.checkout = async (req, res, next) => {
     if (car) {
       const carId = car.id;
 
-      const [items] = await pool.query(
+      const [itemsCarrito] = await pool.query(
         `
         SELECT ci.quantity, p.id AS producto_id, p.titulo, p.precio
         FROM carrito_items ci
@@ -84,7 +84,6 @@ exports.checkout = async (req, res, next) => {
         [carId]
       );
 
-      // Crea pedido_items si aún no existe (no falla si ya existe)
       await pool.query(`
         CREATE TABLE IF NOT EXISTS pedido_items (
           id INT AUTO_INCREMENT PRIMARY KEY,
@@ -97,7 +96,7 @@ exports.checkout = async (req, res, next) => {
         )
       `);
 
-      for (const it of items) {
+      for (const it of itemsCarrito) {
         await pool.query(
           `INSERT INTO pedido_items (pedido_id, producto_id, titulo, precio, cantidad)
            VALUES (?,?,?,?,?)`,
@@ -109,14 +108,25 @@ exports.checkout = async (req, res, next) => {
       await pool.query('DELETE FROM carrito_items WHERE carrito_id = ?', [carId]);
     }
 
-    // 4) Mostrar recibo (o redirigir al reporte si prefieres)
-    const [rows] = await pool.query('SELECT * FROM pedidos WHERE id = ?', [pedidoId]);
-    const pedido = rows[0];
+    // 4) Leer pedido e items para el recibo
+    const [[pedidoRow]] = await pool.query('SELECT * FROM pedidos WHERE id = ?', [pedidoId]);
+
+    // Normaliza el nombre de la columna de fecha para la vista: siempre 'created_at'
+    const pedido = {
+      ...pedidoRow,
+      created_at: pedidoRow.created_at || pedidoRow.creado_en || new Date()
+    };
+
+    const [detalleItems] = await pool.query(
+      `SELECT titulo, precio, cantidad FROM pedido_items WHERE pedido_id = ?`,
+      [pedidoId]
+    );
 
     return res.render('procesos/recibo', {
       title: 'Recibo',
-      pedido,
       page: 'page-cart',
+      pedido,
+      items: detalleItems
     });
 
     // Si prefieres ir directo al reporte:
@@ -127,17 +137,23 @@ exports.checkout = async (req, res, next) => {
   }
 };
 
-// Reporte por fecha (usa created_at, NO "creado_en")
+// ===== Reporte por fecha =====
+// Tolera que la BD tenga 'created_at' o 'creado_en'
 exports.reporte = async (req, res, next) => {
   try {
     const { desde, hasta } = req.query;
+
+    // Detecta qué columna de fecha existe
+    const [cols] = await pool.query(`SHOW COLUMNS FROM pedidos LIKE 'created_at'`);
+    const fechaCol = cols.length ? 'created_at' : 'creado_en';
+
     let sql = `SELECT * FROM pedidos WHERE 1=1`;
     const args = [];
 
-    if (desde) { sql += ` AND DATE(created_at) >= ?`; args.push(desde); }
-    if (hasta) { sql += ` AND DATE(created_at) <= ?`; args.push(hasta); }
+    if (desde) { sql += ` AND DATE(${fechaCol}) >= ?`; args.push(desde); }
+    if (hasta) { sql += ` AND DATE(${fechaCol}) <= ?`; args.push(hasta); }
 
-    sql += ` ORDER BY created_at DESC`;
+    sql += ` ORDER BY ${fechaCol} DESC`;
 
     const [pedidos] = await pool.query(sql, args);
 
