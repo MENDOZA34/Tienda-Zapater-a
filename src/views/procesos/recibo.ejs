@@ -1,0 +1,21 @@
+<%- include('../layouts/main', { page: 'recibo' }) %>
+
+<section class="container" style="max-width: 900px">
+  <h1 class="mb-3">Recibo de compra</h1>
+
+  <div class="card">
+    <div class="card-body">
+      <p><strong>Fecha:</strong> <%= new Date(pedido.created_at).toLocaleString() %></p>
+      <p><strong>Subtotal:</strong> Q<%= Number(pedido.subtotal).toFixed(2) %></p>
+      <p><strong>IVA (12%):</strong> Q<%= Number(pedido.iva).toFixed(2) %></p>
+      <p><strong>Envío:</strong> Q<%= Number(pedido.envio).toFixed(2) %></p>
+      <hr />
+      <p class="h5"><strong>Total:</strong> Q<%= Number(pedido.total).toFixed(2) %></p>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a class="btn btn-primary" href="/procesos/reporte">Ver reporte de pedidos</a>
+    <a class="btn btn-secondary" href="/productos">Seguir comprando</a>
+  </div>
+</section>
