@@ -123,28 +123,35 @@ exports.checkout = async (req, res, next) => {
 };
 
 // ==============================
-// REPORTE DE PEDIDOS (arreglado)
+// REPORTE DE PEDIDOS (tolerante a created_at/creado_en)
 // ==============================
 exports.reporte = async (req, res, next) => {
   try {
     const { desde, hasta } = req.query;
 
-    // Usa COALESCE para evitar error si no existe created_at
-    const dateExpr = 'COALESCE(created_at, creado_en, NOW())';
+    // 1) Detectar cuál columna de fecha existe
+    const [[hasCreatedAt]] = await pool.query("SHOW COLUMNS FROM pedidos LIKE 'created_at'");
+    const [[hasCreadoEn]]  = await pool.query("SHOW COLUMNS FROM pedidos LIKE 'creado_en'");
 
+    const fechaCol = hasCreatedAt ? 'created_at' : (hasCreadoEn ? 'creado_en' : null);
+    if (!fechaCol) {
+      throw new Error("La tabla 'pedidos' no tiene columna de fecha (created_at / creado_en).");
+    }
+
+    // 2) Armar la consulta usando solo la columna real
     let sql = `
-      SELECT *,
-             ${dateExpr} AS fecha
+      SELECT id, usuario_id, subtotal, iva, envio, total, ${fechaCol} AS fecha
       FROM pedidos
       WHERE 1=1
     `;
     const args = [];
 
-    if (desde) { sql += ` AND DATE(${dateExpr}) >= ?`; args.push(desde); }
-    if (hasta) { sql += ` AND DATE(${dateExpr}) <= ?`; args.push(hasta); }
+    if (desde) { sql += ` AND DATE(${fechaCol}) >= ?`; args.push(desde); }
+    if (hasta) { sql += ` AND DATE(${fechaCol}) <= ?`; args.push(hasta); }
 
-    sql += ` ORDER BY ${dateExpr} DESC`;
+    sql += ` ORDER BY ${fechaCol} DESC`;
 
+    // 3) Ejecutar y renderizar
     const [pedidos] = await pool.query(sql, args);
 
     res.render('procesos/reporte', {
