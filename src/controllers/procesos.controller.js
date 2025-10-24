@@ -123,13 +123,13 @@ exports.checkout = async (req, res, next) => {
 };
 
 // ==============================
-// REPORTE DE PEDIDOS (tolerante a created_at/creado_en)
+// REPORTE DE PEDIDOS (sin "Invalid Date")
 // ==============================
 exports.reporte = async (req, res, next) => {
   try {
     const { desde, hasta } = req.query;
 
-    // 1) Detectar cuál columna de fecha existe
+    // Detectar cuál columna de fecha existe
     const [[hasCreatedAt]] = await pool.query("SHOW COLUMNS FROM pedidos LIKE 'created_at'");
     const [[hasCreadoEn]]  = await pool.query("SHOW COLUMNS FROM pedidos LIKE 'creado_en'");
 
@@ -138,9 +138,12 @@ exports.reporte = async (req, res, next) => {
       throw new Error("La tabla 'pedidos' no tiene columna de fecha (created_at / creado_en).");
     }
 
-    // 2) Armar la consulta usando solo la columna real
+    // Devolver también una versión formateada desde MySQL
     let sql = `
-      SELECT id, usuario_id, subtotal, iva, envio, total, ${fechaCol} AS fecha
+      SELECT
+        id, usuario_id, subtotal, iva, envio, total,
+        ${fechaCol} AS fecha_raw,
+        DATE_FORMAT(${fechaCol}, '%d/%m/%Y %H:%i:%s') AS fecha_fmt
       FROM pedidos
       WHERE 1=1
     `;
@@ -151,12 +154,11 @@ exports.reporte = async (req, res, next) => {
 
     sql += ` ORDER BY ${fechaCol} DESC`;
 
-    // 3) Ejecutar y renderizar
     const [pedidos] = await pool.query(sql, args);
 
     res.render('procesos/reporte', {
       title: 'Reporte',
-      pedidos,
+      pedidos,               // cada fila trae p.fecha_fmt y p.fecha_raw
       desde: desde || '',
       hasta: hasta || '',
       page: 'page-cart',
