@@ -1,7 +1,9 @@
 // src/controllers/procesos.controller.js
 const pool = require('../db');
 
-// Carrito
+// ==============================
+// MOSTRAR CARRITO
+// ==============================
 exports.index = async (req, res, next) => {
   try {
     const [car] = await pool.query(
@@ -20,20 +22,14 @@ exports.index = async (req, res, next) => {
 
     const carId = car[0].id;
 
-    const [items] = await pool.query(
-      `
+    const [items] = await pool.query(`
       SELECT ci.id, ci.quantity, p.titulo, p.precio, p.imagen_url, p.id AS producto_id
       FROM carrito_items ci
       JOIN productos p ON p.id = ci.producto_id
       WHERE ci.carrito_id = ?
-      `,
-      [carId]
-    );
+    `, [carId]);
 
-    const total = items.reduce(
-      (s, i) => s + Number(i.precio) * Number(i.quantity),
-      0
-    );
+    const total = items.reduce((s, i) => s + Number(i.precio) * Number(i.quantity), 0);
 
     res.render('procesos/index', {
       title: 'Carrito',
@@ -46,7 +42,9 @@ exports.index = async (req, res, next) => {
   }
 };
 
-// Finalizar compra
+// ==============================
+// FINALIZAR COMPRA
+// ==============================
 exports.checkout = async (req, res, next) => {
   try {
     const uid = req.session.user.id;
@@ -65,7 +63,7 @@ exports.checkout = async (req, res, next) => {
     );
     const pedidoId = p.insertId;
 
-    // 2) Copiar items del carrito a pedido_items (si la tabla existe)
+    // 2) Copiar items del carrito a pedido_items
     const [[car]] = await pool.query(
       'SELECT id FROM carritos WHERE usuario_id = ?',
       [uid]
@@ -74,17 +72,14 @@ exports.checkout = async (req, res, next) => {
     if (car) {
       const carId = car.id;
 
-      const [items] = await pool.query(
-        `
+      const [items] = await pool.query(`
         SELECT ci.quantity, p.id AS producto_id, p.titulo, p.precio
         FROM carrito_items ci
         JOIN productos p ON p.id = ci.producto_id
         WHERE ci.carrito_id = ?
-        `,
-        [carId]
-      );
+      `, [carId]);
 
-      // Crea pedido_items si aún no existe (no falla si ya existe)
+      // Crear tabla pedido_items si no existe
       await pool.query(`
         CREATE TABLE IF NOT EXISTS pedido_items (
           id INT AUTO_INCREMENT PRIMARY KEY,
@@ -105,13 +100,15 @@ exports.checkout = async (req, res, next) => {
         );
       }
 
-      // 3) Vaciar carrito
+      // Vaciar carrito
       await pool.query('DELETE FROM carrito_items WHERE carrito_id = ?', [carId]);
     }
 
-    // 4) Mostrar recibo (o redirigir al reporte si prefieres)
+    // 3) Buscar pedido para mostrar el recibo
     const [rows] = await pool.query('SELECT * FROM pedidos WHERE id = ?', [pedidoId]);
-    const pedido = rows[0];
+    const pedido = rows[0] || {};
+    // Normalizar la fecha (por si la columna es creado_en en vez de created_at)
+    pedido.fecha = pedido.created_at || pedido.creado_en || new Date();
 
     return res.render('procesos/recibo', {
       title: 'Recibo',
@@ -119,15 +116,15 @@ exports.checkout = async (req, res, next) => {
       page: 'page-cart',
     });
 
-    // Si prefieres ir directo al reporte:
-    // return res.redirect('/procesos/reporte');
   } catch (e) {
     console.error('Error en checkout:', e);
     next(e);
   }
 };
 
-// Reporte por fecha (usa created_at, NO "creado_en")
+// ==============================
+// REPORTE DE PEDIDOS
+// ==============================
 exports.reporte = async (req, res, next) => {
   try {
     const { desde, hasta } = req.query;
