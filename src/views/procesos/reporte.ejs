@@ -16,12 +16,19 @@
 
 <table class="table table-striped">
   <thead>
-    <tr><th>Fecha</th><th>Subtotal</th><th>IVA</th><th>Envío</th><th>Total</th></tr>
+    <tr>
+      <th>Fecha</th>
+      <th>Subtotal</th>
+      <th>IVA</th>
+      <th>Envío</th>
+      <th>Total</th>
+    </tr>
   </thead>
   <tbody>
     <% pedidos.forEach(p => { %>
       <tr>
-        <td><%= new Date(p.creado_en).toLocaleString() %></td>
+        <!-- Usamos la fecha formateada desde MySQL; si por algo no viene, caemos a la cruda -->
+        <td><%= p.fecha_fmt || (p.fecha_raw ? new Date(p.fecha_raw).toLocaleString() : '') %></td>
         <td>Q<%= Number(p.subtotal).toFixed(2) %></td>
         <td>Q<%= Number(p.iva).toFixed(2) %></td>
         <td>Q<%= Number(p.envio).toFixed(2) %></td>
