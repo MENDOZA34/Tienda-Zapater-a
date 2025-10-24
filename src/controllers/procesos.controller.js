@@ -123,18 +123,27 @@ exports.checkout = async (req, res, next) => {
 };
 
 // ==============================
-// REPORTE DE PEDIDOS
+// REPORTE DE PEDIDOS (arreglado)
 // ==============================
 exports.reporte = async (req, res, next) => {
   try {
     const { desde, hasta } = req.query;
-    let sql = `SELECT * FROM pedidos WHERE 1=1`;
+
+    // Usa COALESCE para evitar error si no existe created_at
+    const dateExpr = 'COALESCE(created_at, creado_en, NOW())';
+
+    let sql = `
+      SELECT *,
+             ${dateExpr} AS fecha
+      FROM pedidos
+      WHERE 1=1
+    `;
     const args = [];
 
-    if (desde) { sql += ` AND DATE(created_at) >= ?`; args.push(desde); }
-    if (hasta) { sql += ` AND DATE(created_at) <= ?`; args.push(hasta); }
+    if (desde) { sql += ` AND DATE(${dateExpr}) >= ?`; args.push(desde); }
+    if (hasta) { sql += ` AND DATE(${dateExpr}) <= ?`; args.push(hasta); }
 
-    sql += ` ORDER BY created_at DESC`;
+    sql += ` ORDER BY ${dateExpr} DESC`;
 
     const [pedidos] = await pool.query(sql, args);
 
