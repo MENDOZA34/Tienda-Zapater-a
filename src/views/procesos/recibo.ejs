@@ -8,7 +8,12 @@
     <div class="card mb-3">
       <div class="card-body">
         <p class="mb-1"><strong>Folio:</strong> <%= pedido.id %></p>
-        <p class="mb-1"><strong>Fecha:</strong> <%= pedido.created_at.toISOString().slice(0,19).replace('T',' ') %></p>
+        <% 
+          const _d = new Date(pedido.fecha || pedido.created_at || pedido.creado_en || Date.now());
+          const _local = new Date(_d.getTime() - _d.getTimezoneOffset() * 60000)
+                            .toISOString().slice(0,19).replace('T',' ');
+        %>
+        <p class="mb-1"><strong>Fecha:</strong> <%= _local %></p>
         <p class="mb-1"><strong>Usuario ID:</strong> <%= pedido.usuario_id %></p>
       </div>
     </div>
